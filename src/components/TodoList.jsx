@@ -1,6 +1,6 @@
 import TodoItem from './TodoItem'
 
-function TodoList({ title, todos, onToggle, onDelete }) {
+function TodoList({ title, todos, onToggle, onDelete, onUpdate }) {
   return (
     <section className="todo-list">
       <h2 className="todo-list-title">{title}</h2>
@@ -16,6 +16,7 @@ function TodoList({ title, todos, onToggle, onDelete }) {
             todo={todo}
             onToggle={onToggle}
             onDelete={onDelete}
+            onUpdate={onUpdate}
           />
         ))}
       </ul>
