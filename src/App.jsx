@@ -1,6 +1,8 @@
-import { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
-import './App.css'
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import "./App.css";
+import TodoForm from "./components/TodoForm";
+import TodoList from "./components/TodoList";
 
 /* ============================================================
  * [level-2 미션] 아래 App.jsx 는 level-1 에서 완성한 결과물입니다.
@@ -34,7 +36,7 @@ import './App.css'
  *          내부에서 todo.content, todo.isDone, todo.id 를 꺼내 씁니다.
  *
  * ------------------------------------------------------------
- * 3) 고급 리팩터링 포인트 ★ 
+ * 3) 고급 리팩터링 포인트 ★
  * (이 설명은 참고만 하세요. 이 부분 이해안되면 일단 본인 생각대로해서 컴포넌트분리를 먼저 해내세요)
  *
  *    지금 App 안의 handleSubmit 함수는 두 가지 일을 같이 하고 있습니다.
@@ -63,110 +65,53 @@ import './App.css'
  * ============================================================ */
 
 function App() {
-  const [todos, setTodos] = useState([])
-  const [content, setContent] = useState('')
+  const [todos, setTodos] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (content.trim() === '') return
-    const newTodo = { id: uuidv4(), content, isDone: false }
-    setTodos((prev) => [...prev, newTodo])
-    setContent('')
-  }
+  const handleAdd = (content) => {
+    const newTodo = { id: uuidv4(), content, isDone: false };
+    setTodos((prev) => [...prev, newTodo]);
+  };
 
   const handleDelete = (id) => {
-    setTodos((prev) => prev.filter((todo) => todo.id !== id))
-  }
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
 
   const handleToggle = (id) => {
     setTodos((prev) =>
       prev.map((todo) =>
-        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
-      )
-    )
-  }
+        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo,
+      ),
+    );
+  };
 
-  const todoItems = todos.filter((todo) => !todo.isDone)
-  const doneItems = todos.filter((todo) => todo.isDone)
+  const todoItems = todos.filter((todo) => !todo.isDone);
+  const doneItems = todos.filter((todo) => todo.isDone);
 
   return (
-    <main className="app">
-      <header className="app-header">
+    <main className='app'>
+      <header className='app-header'>
         <h1>To Do List</h1>
       </header>
 
-      <form className="todo-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className="todo-input"
-          placeholder="할 일을 입력하세요"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+      <TodoForm onAdd={handleAdd} />
+
+      <div className='todo-sections'>
+        <TodoList
+          title='할 일'
+          todos={todoItems}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
         />
-        <button type="submit" className="add-button">추가</button>
-      </form>
 
-      <div className="todo-sections">
-
-        <section className="todo-list">
-          <h2 className="todo-list-title">할 일</h2>
-
-          {todoItems.length === 0 && (
-            <p className="empty-message">항목이 없습니다</p>
-          )}
-
-          <ul className="todo-items">
-            {todoItems.map((todo) => (
-              <li className="todo-item" key={todo.id}>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(todo.id)}
-                >
-                  ✕
-                </button>
-                <p className="todo-content">{todo.content}</p>
-                <button
-                  className="toggle-button"
-                  onClick={() => handleToggle(todo.id)}
-                >
-                  완료
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="todo-list">
-          <h2 className="todo-list-title">완료한 일</h2>
-
-          {doneItems.length === 0 && (
-            <p className="empty-message">항목이 없습니다</p>
-          )}
-
-          <ul className="todo-items">
-            {doneItems.map((todo) => (
-              <li className="todo-item" key={todo.id}>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(todo.id)}
-                >
-                  ✕
-                </button>
-                <p className="todo-content done">{todo.content}</p>
-                <button
-                  className="toggle-button"
-                  onClick={() => handleToggle(todo.id)}
-                >
-                  취소
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-
+        <TodoList
+          title='완료한 일'
+          todos={doneItems}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
+        />
       </div>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
